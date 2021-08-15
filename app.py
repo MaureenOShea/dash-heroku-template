@@ -42,14 +42,10 @@ gss_clean.age = gss_clean.age.astype('float')
 ## Generate the individual tables and figures
 
 ### Markdown text
-markdown_usdol = '''  
-The U.S. Department of Labor published a blog by Janelle Jones entitled ['5 Facts About the State of the Gender Pay Gap'](https://blog.dol.gov/2021/03/19/5-facts-about-the-state-of-the-gender-pay-gap). The blog was published to generate awareness to discrepancies between gender and pay.  A summary of 5 facts are as follows: 1. In 2020, for every dollar a man earns, a woman earns 82 cents. 2. The wage gap is even greater than 82 cents per dollar for non-white women. 3. In almost every occupation, women earn less than men. 4. When being compared at equal educational attainment levels, a woman earns less than a man of her same race. 5. The COVID pandemic is a major setback to closing the gender pay gap. 
-'''
-markdown_epi = '''
-The Economic Policy Institute published a report entitled ['What is the gender pay gap and is it real?'](https://www.epi.org/publication/what-is-the-gender-pay-gap-and-is-it-real)  by E. Gould, J. Scheider, and K. Geier discussing a number of different ways the gender pay gap is measured.  Because different measurement techniques create varying results, the website reviews the measurement techniques and their results to educate the reader on many factors involved in the gender wage gap.  Ways the gender wage gap can be measured include race, educational level, motherhood, work experience, whether in a union, and income level. 
-'''
-markdown_gss = '''
-The [General Social Survey (GSS)](http://www.gss.norc.org/About-The-GSS) is a national survey developed by James A. Davis in 1972 as a 'National Data Program for the Social Sciences'.  The biennial survey, conducted on even numbered years, monitors past and present sociological trends in the United States.  Adults living in households across the United States and coming from a random mix of rural, urban and suburban areas are the target population for the GSS survey. Survey questions cover a vast number of topics including occupational prestige, income, age when first married, and political party affiliation. The questions are regulary adapted to address current social matters and the survey is currently offered online.  Survey data is used to study sociological trends in the United States. GSS data specific to the income and job prestige for males and females is presented in the dashboard.
+markdown= '''
+In March 20202, the U.S. Department of Labor published a blog by Janelle Jones entitled ['5 Facts About the State of the Gender Pay Gap'](https://blog.dol.gov/2021/03/19/5-facts-about-the-state-of-the-gender-pay-gap). The blog was published to generate awareness to discrepancies between gender and pay.  A summary of 5 facts are as follows: 1. In 2020, for every dollar a man earns, a woman earns 82 cents. 2. The wage gap is even greater than 82 cents per dollar for non-white women. 3. In almost every occupation, women earn less than men. 4. When being compared at equal educational attainment levels, a woman earns less than a man of her same race. 5. The COVID pandemic is a major setback to closing the gender pay gap. The Economic Policy Institute published a report entitled ['What is the gender pay gap and is it real?'](https://www.epi.org/publication/what-is-the-gender-pay-gap-and-is-it-real)  by E. Gould, J. Scheider, and K. Geier.  The report  introduces the vast number of ways to measure gender pay and discusses the reasons specific measurement techniques create different gender pay gap results.  
+
+The [General Social Survey (GSS)](http://www.gss.norc.org/About-The-GSS) is a national survey developed by James A. Davis in 1972 and is used to study sociological trends in the United States. The dashboard presents [GSS](http://www.gss.norc.org/About-The-GSS) data specific to income and job prestige for males and females. The biennial survey, monitors past and present sociological trends.  Adults from across the United States and coming from a random mix of rural, urban and suburban areas are the target population. Survey questions cover a vast number of topics including occupational prestige, income, age when first married, and political party affiliation. The questions are regulary adapted to address current social matters and the survey is currently offered online. GSS survey questions and documentation can be found on their [website](http://www.gss.norc.org/About-The-GSS).
 '''
 
 ### Table
@@ -128,16 +124,11 @@ server = app.server
 
 app.layout=html.Div(
     [
-     html.H1("Dashboard of Income and Job Prestige for Males and Females"),
+     html.H1("Dashboard of Income for Males and Females in the United States"),
      
      html.H2("Gender Wage Gap Discussion"),
-     html.H4("US Department of Labor Blog"),
-     dcc.Markdown(children = markdown_usdol),
-     html.H4("The Economic Policy Institute"),
-     dcc.Markdown(children = markdown_epi),   
-     html.H4("The General Social Survery (GSS)"),
-     dcc.Markdown(children = markdown_gss),     
-     
+     dcc.Markdown(children = markdown),
+
  
      html.H2("Averages for Males and Females "),
      dcc.Graph(figure =fig_table),
