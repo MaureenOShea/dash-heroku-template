@@ -64,9 +64,28 @@ fig_table = ff.create_table(gss_table)
 
 ### Barplot
 
+# create interactive bar plot data
+gss_clean['satjob'] = gss_clean['satjob'].astype('category')                   
+gss_clean['satjob']= gss_clean['satjob'].cat.reorder_categories([ 'very satisfied', 'mod. satisfied', 'a little dissat', 'very dissatisfied'])
 
+gss_clean['relationship']= gss_clean['relationship'].astype('category')
+gss_clean['relationship']= gss_clean['relationship'].cat.reorder_categories(['strongly agree', 'agree', 'disagree', 'strongly disagree'])
+
+gss_clean['male_breadwinner']= gss_clean['male_breadwinner'].astype('category') 
+gss_clean['male_breadwinner']= gss_clean['male_breadwinner'].cat.reorder_categories(['strongly agree', 'agree', 'disagree', 'strongly disagree'])
+
+gss_clean['child_suffer']= gss_clean['child_suffer'].astype('category')
+gss_clean['child_suffer']= gss_clean['child_suffer'].cat.reorder_categories(['strongly agree', 'agree', 'disagree', 'strongly disagree'])
+
+gss_clean['men_overwork'] = gss_clean['men_overwork'].astype('category')
+gss_clean['men_overwork'] = gss_clean['men_overwork'].cat.reorder_categories(['strongly agree', 'agree', 'neither agree nor disagree', 'disagree', 'strongly disagree'])
 ### Scatterplot
-
+# create interactive scatterplot data
+axis_columns = ['education', 'age', 'income',
+       'job_prestige', 'mother_job_prestige', 'father_job_prestige',
+       'socioeconomic_index']
+cat_columns = ['sex','region']
+gss_scatter = gss_clean[axis_columns + cat_columns]
 
 ### Boxplots
 # Distribution of Income Boxplot
@@ -183,21 +202,7 @@ app.layout=html.Div(
               ])
 
 def makebarplot(x, color):
-    gss_clean['satjob'] = gss_clean['satjob'].astype('category')                   
-    gss_clean['satjob']= gss_clean['satjob'].cat.reorder_categories([ 'very satisfied', 'mod. satisfied', 'a little dissat', 'very dissatisfied'])
-
-    gss_clean['relationship']= gss_clean['relationship'].astype('category')
-    gss_clean['relationship']= gss_clean['relationship'].cat.reorder_categories(['strongly agree', 'agree', 'disagree', 'strongly disagree'])
-
-    gss_clean['male_breadwinner']= gss_clean['male_breadwinner'].astype('category') 
-    gss_clean['male_breadwinner']= gss_clean['male_breadwinner'].cat.reorder_categories(['strongly agree', 'agree', 'disagree', 'strongly disagree'])
-
-    gss_clean['child_suffer']= gss_clean['child_suffer'].astype('category')
-    gss_clean['child_suffer']= gss_clean['child_suffer'].cat.reorder_categories(['strongly agree', 'agree', 'disagree', 'strongly disagree'])
-
-    gss_clean['men_overwork'] = gss_clean['men_overwork'].astype('category')
-    gss_clean['men_overwork'] = gss_clean['men_overwork'].cat.reorder_categories(['strongly agree', 'agree', 'neither agree nor disagree', 'disagree', 'strongly disagree'])
-    
+ 
     axis_bars = ['satjob', 'relationship', 'male_breadwinner', 'men_bettersuited', 'child_suffer', 'men_overwork']
     group_bars = ['sex','region', 'education']
     gss_bar = gss_clean[axis_bars + group_bars].dropna()
@@ -221,11 +226,6 @@ def makebarplot(x, color):
 
 def make_figure(x, y, color):
    
-    axis_columns = ['education', 'age', 'income', 'job_prestige', 
-                    'mother_job_prestige', 'father_job_prestige', 
-                    'socioeconomic_index']
-    cat_columns = ['sex','region']
-    gss_scatter = gss_clean[axis_columns + cat_columns]
 
     fig_scatter =  px.scatter(gss_scatter, x=x, y=y, 
                               color=color, color_discrete_map = {'male':'blue', 'female':'red'},
