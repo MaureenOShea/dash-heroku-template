@@ -140,11 +140,12 @@ app.layout=html.Div(
      html.Div([
          html.H4("Distribution of Income"),
          dcc.Graph(figure=fig_box)],style={'width': '48%', 'float': 'left'}),
- 
+
      html.Div([
          html.H2("Income Distribution by Job Prestige Level"),
-         dcc.Graph(figure=fig_box2)],style={'width': '48%', 'float': 'right'}),
-     
+         dcc.Graph(figure=fig_df)],style={'width': '50%', 'float': 'right'}),
+
+
      html.Div([
          html.H4("Distribution of Job Prestige"),
          dcc.Graph(figure=fig_box2)],style={'width': '48%', 'float': 'left'})
