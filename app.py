@@ -1,3 +1,4 @@
+
 import numpy as np
 import pandas as pd
 import plotly.express as px
@@ -90,29 +91,31 @@ fig_scatter = px.scatter(gss_clean, x='job_prestige', y='income',
 ### Boxplots
 # Distribution of Income Boxplot
 
-
 fig_box = px.box(gss_clean, x='income', y = 'sex', color = 'sex',
-                 height=320, width=575,
-                 labels={'income':'income ($)', 'sex':''})
+                   labels={'income':'income ($)', 'sex':''})
 fig_box.update_layout(showlegend=False)
 
 # Distribution of Occupational Prestige Boxplot
 
-
 fig_box2 = px.box(gss_clean, x='job_prestige', y = 'sex', color = 'sex',
-                  height=320, width=575,
-                  labels={'job_prestige':'job prestige', 'sex':''})
+                   labels={'job_prestige':'job prestige', 'sex':''})
 fig_box2.update_layout(showlegend=False)
 
+### 2x3 Faceted Boxplots
+dfcols = ['income', 'sex', 'job_prestige']
 
-###  Faceted Boxplots
+df = gss_clean[dfcols]                  # create new dataframe     
+
+binned= pd.cut(df['job_prestige'], 6)   #create 6 equal bins for `job_prestige`
+
+df['binned'] = binned
+df = df.dropna()                        # drop all rows with missing values
+
 fig_df = px.box(df, x='income', y = 'sex', color = 'sex',
-            facet_col= 'binned', facet_col_wrap= 1,
-            height=700, width=600,
+            facet_col= 'binned', facet_col_wrap= 2,
             labels={'income':'income ($)', 'sex':''},
             color_discrete_map = {'male':'blue', 'female':'red'})
 fig_df.update_layout(showlegend=False)
-#fig_df.update(layout=dict(title=dict(x=0.5)))
 fig_df.for_each_annotation(lambda a: a.update(text=a.text.replace("binned=", "job prestige level =" )))
 
 
@@ -122,13 +125,12 @@ server = app.server
 
 app.layout=html.Div(
     [
-     html.H1("Dashboard of Income for Males and Females in the United States"),
+     html.H1("Dashboard of Income and Job Prestige for Males and Females"),
      
      html.H2("Gender Wage Gap Discussion"),
-     dcc.Markdown(children = markdown),
-
+     dcc.Markdown(children = markdown), 
  
-     html.H2("Averages for Males and Females"),
+     html.H2("Averages for Males and Females "),
      dcc.Graph(figure =fig_table),
  
      html.H2("Agreement Levels to 'The Male is the Breadwinner' "),
@@ -138,20 +140,18 @@ app.layout=html.Div(
      dcc.Graph(figure=fig_scatter),
      
      html.Div([
-         html.H4("Distribution of Income"),
+         html.H2("Distribution of Income for Males and Females"),
          dcc.Graph(figure=fig_box)],style={'width': '48%', 'float': 'left'}),
-
+ 
      html.Div([
-         html.H2("Income Distribution by Job Prestige Level"),
-         dcc.Graph(figure=fig_df)],style={'width': '50%', 'float': 'right'}),
-
-
+         html.H2("Distribution of Occupational Prestige for Males and Females "),
+         dcc.Graph(figure=fig_box2)],style={'width': '48%', 'float': 'right'}),
+     
      html.Div([
-         html.H4("Distribution of Job Prestige"),
-         dcc.Graph(figure=fig_box2)],style={'width': '48%', 'float': 'left'})
+         html.H2("Income Distribution per Job Prestige Levels for Males and Females"),
+         dcc.Graph(figure=fig_df)])
     ]
 )
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-
