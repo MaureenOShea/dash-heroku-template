@@ -64,20 +64,25 @@ gss_table = gss_table.groupby('sex').agg({'income':'mean',
 fig_table = ff.create_table(gss_table)
 
 ### Barplot
+    
+gss_clean['satjob'] = gss_clean['satjob'].astype('category')                    
+gss_clean['satjob']= gss_clean['satjob'].cat.reorder_categories([ 'very satisfied', 'mod. satisfied', 'a little dissat', 'very dissatisfied'])
 
-# change datatype of `male_breadwinner` to 'category'
-gss_clean['male_breadwinner']= gss_clean['male_breadwinner'].astype('category')
+gss_clean['relationship']= gss_clean['relationship'].astype('category')
+gss_clean['relationship']= gss_clean['relationship'].cat.reorder_categories(['strongly agree', 'agree', 'disagree', 'strongly disagree'])
 
-# reorder categories in male_breadwinner
+gss_clean['male_breadwinner']= gss_clean['male_breadwinner'].astype('category') 
 gss_clean['male_breadwinner']= gss_clean['male_breadwinner'].cat.reorder_categories(['strongly agree', 'agree', 'disagree', 'strongly disagree'])
 
-gss_bar = gss_clean.groupby(['sex', 'male_breadwinner']).size().reset_index()
-gss_bar = gss_bar.rename({0:'count'}, axis=1)
+gss_clean['child_suffer']= gss_clean['child_suffer'].astype('category')
+gss_clean['child_suffer']= gss_clean['child_suffer'].cat.reorder_categories(['strongly agree', 'agree', 'disagree', 'strongly disagree'])
 
-fig_bar = px.bar(gss_bar, x='male_breadwinner', y='count', color='sex',
-             color_discrete_map = {'male':'blue', 'female':'red'},
-       labels={'count':'Number of people', 'male_breadwinner':"Agreement level choice"},
-      barmode= 'group')
+gss_clean['men_overwork'] = gss_clean['men_overwork'].astype('category')
+gss_clean['men_overwork'] = gss_clean['men_overwork'].cat.reorder_categories(['strongly agree', 'agree', 'neither agree nor disagree', 'disagree', 'strongly disagree
+
+gss_clean['men_bettersuited']= gss_clean['men_bettersuited'].astype('category')
+
+
 
 ### Scatterplot
 fig_scatter = px.scatter(gss_clean, x='job_prestige', y='income', 
@@ -125,7 +130,7 @@ server = app.server
 
 app.layout=html.Div(
     [
-     html.H1("Dashboard of Income and Job Prestige for Males and Females"),
+     html.H1("Dashboard of Income for Males and Females in the United States"),
      
      html.H2("Gender Wage Gap Discussion"),
      dcc.Markdown(children = markdown), 
@@ -133,8 +138,23 @@ app.layout=html.Div(
      html.H2("Averages for Males and Females "),
      dcc.Graph(figure =fig_table),
  
-     html.H2("Agreement Levels to 'The Male is the Breadwinner' "),
-     dcc.Graph(figure=fig_bar),
+     html.Div([html.H2("Agreement Level by People"),
+        
+     dcc.Graph(id="barplot")],style={'width': '70%', 'float': 'left'}),
+   # bar plot     
+     html.Div([
+         html.H5("x-axis selection"),
+         dcc.Dropdown(id='x_dropdown',
+                      options=[{'label': i, 'value': i} for i in axis_bars],
+                      value='male_breadwinner'),
+
+         html.H5("category selection"),
+         dcc.Dropdown(id='category',
+                      options=[{'label': i, 'value': i} for i in group_bars],
+                      value='sex')],style={'width': '20%', 'float': 'left'}),
+        html.Div([
+            html.H2("Comparisons by Males/Females or Geographical Regions"),
+            dcc.Graph(id="graph")], style={'width': '70%', 'float': 'right'}),
  
      html.H2("Income vs Job Prestige for Males and Females"),
      dcc.Graph(figure=fig_scatter),
@@ -152,6 +172,30 @@ app.layout=html.Div(
          dcc.Graph(figure=fig_df)])
     ]
 )
+
+    
+@app.callback(Output('barplot', 'figure'),                 # Output is the table or figure , argument for output
+              [Input('x_dropdown', 'value'),                  # Input is the dropdown, argument for input
+               Input('category', 'value')
+              ])
+
+def makebarplot(x, color):
+    axis_bars = ['satjob', 'relationship', 'male_breadwinner', 'men_bettersuited', 'child_suffer', 'men_overwork']
+    group_bars = ['sex','region', 'education']
+    gss_bar = gss_clean[axis_bars + group_bars].dropna()
+    
+    
+    gss_bar = gss_bar.groupby([x, color]).size().reset_index()
+    gss_bar = gss_bar.rename({0:'count'}, axis=1)
+    
+    fig_bar = px.bar(gss_bar[[x,'count',color]], x=x, y='count', color=color,
+                      height=500, width=1000,
+                     labels={'count':'number of people', x : x + " agreement level" },
+                     color_discrete_map = {'male':'blue', 'female':'red'},
+                     barmode= 'group')
+    #fig_bar = fig_bar.update(layout=dict(title=dict(x=0.5)))
+    return fig_bar
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
